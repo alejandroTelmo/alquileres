@@ -2,7 +2,9 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\Propietario;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\DB;
 
 class PropietarioController extends Controller
 {
@@ -13,7 +15,8 @@ class PropietarioController extends Controller
      */
     public function index()
     {
-        //
+      $propietarios=  DB::table('propietarios')->select('*')->get();
+      return $propietarios ;
     }
 
     /**
@@ -23,7 +26,7 @@ class PropietarioController extends Controller
      */
     public function create()
     {
-        //
+        return view('propietarios.form');
     }
 
     /**
@@ -34,7 +37,39 @@ class PropietarioController extends Controller
      */
     public function store(Request $request)
     {
-        //
+
+
+        $request->validate([
+            'name'=>'required|min:3|max:60',
+            'invoice'=>'required|max:1',
+            'address' =>'required|max:60',
+            'city'=>'required|max:60',
+            'phone'=>'required|max:15',
+            'email' =>'required|max:60',
+            'status' =>'required|max:1'
+
+        ]);
+        $nombre=$request->post('name');
+        $invoice=$request->post('invoice');
+        $address=$request->post('address');
+        $city=$request->post('city');
+        $phone=$request->post('phone');
+        $email=$request->post('email');
+        $status=$request->post('status');
+
+
+
+        DB::table('propietarios')->insert([
+            'name'=>$nombre,
+            'invoice'=> $invoice,
+            'address'=>$address,
+            'city'=>$city,
+            'phone'=>$phone,
+            'email'=>$email,
+            'status'=>$status,
+
+        ]);
+
     }
 
     /**
@@ -45,7 +80,9 @@ class PropietarioController extends Controller
      */
     public function show($id)
     {
-        //
+
+        $propietario=DB::table('propietarios')->where('id',$id)->first();
+        return $propietario;
     }
 
     /**
@@ -56,7 +93,8 @@ class PropietarioController extends Controller
      */
     public function edit($id)
     {
-        //
+        $propietario=DB::table('propietarios')->where('id',$id)->first();
+        return view('propietarios.edit',compact('propietario'));
     }
 
     /**
@@ -68,7 +106,25 @@ class PropietarioController extends Controller
      */
     public function update(Request $request, $id)
     {
-        //
+              $propietario=Propietario::findOrFail($id);
+              $request->validate([
+                'name'=>'required|min:3|max:60',
+                'invoice'=>'required|max:1',
+                'address' =>'required|max:60',
+                'city'=>'required|max:60',
+                'phone'=>'required|max:15',
+                'email' =>'required|max:60',
+                'status' =>'required|max:1'
+            ]);
+              $propietario->name=$request->input('name');
+              $propietario->invoice=$request->input('invoice');
+              $propietario->address=$request->input('address');
+              $propietario->city =$request->input('city');
+              $propietario->phone=$request->input('phone');
+              $propietario->email=$request->input('email');
+              $propietario->status=$request->input('status');
+              $propietario->save();
+
     }
 
     /**
@@ -79,6 +135,6 @@ class PropietarioController extends Controller
      */
     public function destroy($id)
     {
-        //
+        DB::table('propietarios')->where('id',$id)->delete();
     }
 }

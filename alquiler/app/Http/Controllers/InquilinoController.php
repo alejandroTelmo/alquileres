@@ -15,8 +15,8 @@ class InquilinoController extends Controller
      */
     public function index()
     {
-      $products=  DB::table('inquilinos')->select('*')->get();
-      return $products ;
+      $inquilinos=  DB::table('inquilinos')->select('*')->get();
+      return $inquilinos ;
     }
 
     /**
