@@ -2,7 +2,9 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\Inquilino;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\DB;
 
 class InquilinoController extends Controller
 {
@@ -13,7 +15,8 @@ class InquilinoController extends Controller
      */
     public function index()
     {
-        //
+      $products=  DB::table('inquilinos')->select('*')->get();
+      return $products ;
     }
 
     /**
@@ -23,7 +26,7 @@ class InquilinoController extends Controller
      */
     public function create()
     {
-        //
+        return view('inquilinos.form');
     }
 
     /**
@@ -34,7 +37,30 @@ class InquilinoController extends Controller
      */
     public function store(Request $request)
     {
-        //
+
+        $request->validate([
+            'name'=>'required|min:3|max:50',
+            'phone'=>'required',
+            'cuit' =>'required',
+            'dni' =>'required',
+            'facturar' =>'required'
+
+        ]);
+        $nombre=$request->post('name');
+        $phone=$request->post('phone');
+        $cuit=$request->post('cuit');
+        $dni=$request->post('dni');
+        $facturar=$request->post('facturar');
+
+        DB::table('inquilinos')->insert([
+            'name'=>$nombre,
+            'phone'=>$phone,
+            'cuit'=> $cuit,
+            'dni'=>$dni,
+            'facturar'=>$facturar,
+
+        ]);
+
     }
 
     /**
@@ -45,7 +71,9 @@ class InquilinoController extends Controller
      */
     public function show($id)
     {
-        //
+
+        $inquilino=DB::table('inquilinos')->where('id',$id)->first();
+        return $inquilino;
     }
 
     /**
@@ -56,7 +84,8 @@ class InquilinoController extends Controller
      */
     public function edit($id)
     {
-        //
+        $inquilino=DB::table('inquilinos')->where('id',$id)->first();
+        return view('inquilinos.edit',compact('inquilino'));
     }
 
     /**
@@ -68,7 +97,22 @@ class InquilinoController extends Controller
      */
     public function update(Request $request, $id)
     {
-        //
+              $inquilino=Inquilino::findOrFail($id);
+              $request->validate([
+                'name'=>'required|min:3|max:50',
+                'phone'=>'required',
+                'cuit' =>'required',
+                'dni' =>'required',
+                'facturar' =>'required'
+            ]);
+              $inquilino->name=$request->input('name');
+              $inquilino->phone=$request->input('phone');
+              $inquilino->cuit =$request->input('cuit');
+              $inquilino->dni=$request->input('dni');
+              $inquilino->facturar =$request->input('facturar');
+
+              $inquilino->save();
+
     }
 
     /**
@@ -79,6 +123,6 @@ class InquilinoController extends Controller
      */
     public function destroy($id)
     {
-        //
+        DB::table('inquilinos')->where('id',$id)->delete();
     }
 }
