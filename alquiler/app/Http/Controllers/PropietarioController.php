@@ -16,7 +16,7 @@ class PropietarioController extends Controller
     public function index()
     {
       $propietarios=  DB::table('propietarios')->select('*')->get();
-      return $propietarios ;
+      return response()->json($propietarios)  ;
     }
 
     /**
